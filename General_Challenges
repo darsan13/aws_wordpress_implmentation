@@ -1,0 +1,20 @@
+1. Can the AWS access key file path be used in the main.tf file?
+  Yeah, we can provide the path (~/.aws/config or ~/.aws/credentials) as the value in the aws provider block.
+
+2. How can you use Hashicorp vault or GitHub env variables to solve this problem?
+  We need to add our secret variables under the security tab of the repo. Those with the collaborator access to the repo can access and use the variables. Pipelines initiated by the forked repos will not have access to the variables.
+
+3. How to resolve the error "Invalid loadbalancer arn" when you updated the region or tried to launch from different account?
+   
+   It is deafault behaviour of terraform, it will not refresh the account or region in the state file while planning or init. We need to pass an argument -refresh=false when running plan and apply. When applying the changes it will considerr the current region or account id we used in the configuration.
+
+   If the issue still exists, delete all the terraform state files and run terraform init to reinitialize the terraform state.  
+
+4. SSH into private instance from bastion host.
+
+    add the ssh key before login to the bastion host using **ssh-add -k "private-key"**. Then login to the bastion host using **ssh -A ec2-user@bastion_ip**.
+    Now login to the private instance from the bastion host using ** ssh -i "private_key" ec2-user@private_ip**
+
+5. Accessing the application running in private instances through load balancer.
+
+    Resolved by adding the public subnet security group to the load balancer to allow internet taffic to the load balancer( attaching internet gateway to the load balancer).
